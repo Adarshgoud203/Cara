@@ -113,33 +113,29 @@ function loadNavbar() {
     return;
   }
 
-}
   initDarkMode();
   initMobileNavbar();
-  }
-  function initMobileNavbar() {
+}
 
+function initMobileNavbar() {
   const bar = document.getElementById("bar");
   const close = document.getElementById("close");
   const navbar = document.getElementById("navbar");
 
   if (!bar || !navbar) return;
 
-  // Open menu
   function openMenu() {
     navbar.classList.add("active");
     bar.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
   }
 
-  // Close menu
   function closeMenu() {
     navbar.classList.remove("active");
     bar.setAttribute("aria-expanded", "false");
     document.body.style.overflow = "";
   }
 
-  // Open handlers
   bar.addEventListener("click", openMenu);
 
   bar.addEventListener("keydown", (e) => {
@@ -149,7 +145,6 @@ function loadNavbar() {
     }
   });
 
-  // Close handlers
   if (close) {
     close.addEventListener("click", (e) => {
       e.preventDefault();
@@ -157,12 +152,9 @@ function loadNavbar() {
     });
   }
 
-  // Close on outside click
   document.addEventListener("click", (e) => {
-
     const clickedInsideNavbar = navbar.contains(e.target);
     const clickedBar = bar.contains(e.target);
-
     if (
       navbar.classList.contains("active") &&
       !clickedInsideNavbar &&
@@ -172,50 +164,51 @@ function loadNavbar() {
     }
   });
 
-  // Close on ESC key
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeMenu();
     }
   });
 
-  // Close menu after clicking nav links on mobile
   const navLinks = navbar.querySelectorAll("a");
-
   navLinks.forEach((link) => {
     link.addEventListener("click", () => {
       closeMenu();
     });
   });
- }
-
+}
 
 function initDarkMode() {
   const themeToggle = document.getElementById("themeToggle");
   const themeIcon = document.getElementById("themeIcon");
 
+  // FIX: CSS uses [data-theme="dark"] attribute, not .dark class
   const isDarkSaved = localStorage.getItem("theme") === "dark";
 
   if (isDarkSaved) {
-    document.body.classList.add("dark");
-
+    document.body.setAttribute("data-theme", "dark");
     if (themeIcon) {
       themeIcon.classList.replace("ri-moon-line", "ri-sun-line");
     }
+  } else {
+    document.body.removeAttribute("data-theme");
   }
 
   function handleToggle() {
-    document.body.classList.toggle("dark");
+    const isDark = document.body.getAttribute("data-theme") === "dark";
 
-    const isDark = document.body.classList.contains("dark");
-
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-
-    if (themeIcon) {
-      themeIcon.classList.replace(
-        isDark ? "ri-moon-line" : "ri-sun-line",
-        isDark ? "ri-sun-line" : "ri-moon-line"
-      );
+    if (isDark) {
+      document.body.removeAttribute("data-theme");
+      localStorage.setItem("theme", "light");
+      if (themeIcon) {
+        themeIcon.classList.replace("ri-sun-line", "ri-moon-line");
+      }
+    } else {
+      document.body.setAttribute("data-theme", "dark");
+      localStorage.setItem("theme", "dark");
+      if (themeIcon) {
+        themeIcon.classList.replace("ri-moon-line", "ri-sun-line");
+      }
     }
   }
 
